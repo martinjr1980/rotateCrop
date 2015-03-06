@@ -10,7 +10,7 @@ p.nav { margin-right: 10px; display: inline-block; font-size: 15px; color: #33CC
 #container { min-height: 100%; height: auto; width: 100%; position: absolute; top: 0px; left: 0px;  background-image: url('./../images/background1.jpg');  background-color: gray; background-size: 100% 100%; text-align: center; padding-top: 100px;  }
 #container2 { min-height: 100%; height: auto; width: 100%; position: absolute; top: 0px; left: 0px;  background-image: url('./../images/background1.jpg');  background-color: gray; background-size: 100% 100%; padding-top: 45px; }
 #side-bar { min-height: 100%; width: 200px; position: absolute; top: 0px; left: 0px; background-color: #999999; padding-left: 10px; text-align: left; opacity: 0.8; }
-#slider { width: 170px; margin-left: 5px; }
+#slider { width: 170px; margin-left: 5px; margin-bottom: 10px;}
 #content { min-height: 100%; width: 100%; padding-left: 200px; }
 .side-bar { margin-top: 50px; }
 
@@ -18,6 +18,7 @@ button { height: 25px; width: 60px; border: 1px solid black; border-radius: 3px;
 button.long { width: 80px; }
 button.green { background-color: #33FF33; }
 p.green { color: #33FF33; }
+p.red { color: red; }
 input.small { width: 50px; margin-bottom: 20px; border: 1px solid black; border-radius: 3px; text-align: center; }
 
 div.thumb { height: 200px; width: 300px; background-size: cover; margin: 10px; border: 1px solid white; border-radius: 5px; box-shadow: 0 0 20px #000000; }
@@ -26,3 +27,9 @@ img#full { border: 1px solid white; background-size: cover; }
 
 .hide { display: none; }
 .inline { display: inline-block; }
+
+#select-box {
+	border: 1px solid red;
+	position: absolute;
+	z-index: 9999;
+}

@@ -13,9 +13,11 @@
 }
 .jcrop-vline {
     height: 100%;
-    width: 1px!important
+    width: 1px!important;
 }
 .jcrop-vline.right {
+    padding: 0px!important;
+    top: 0px!important;
     right: 0
 }
 .jcrop-hline {
@@ -144,5 +146,5 @@
 .jcrop-holder img,
 img.jcrop-preview {
 /*    max-width: none*/
-border: 1px solid white;
+/*border: 1px solid white;*/
 }

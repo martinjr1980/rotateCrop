@@ -4,9 +4,14 @@ module.exports = (function() {
 	return {
 		create: function (req, res) {
 			fs.readFile(req.files.file.path, function (err, data) {
-				var newPath = "/Users/Jeremy/Desktop/Coding_Dojo/500_myProjects/FastFit360/client/angular/public/images/" + req.files.file.originalFilename;
+				var newPath = "./client/angular/public/images/" + req.files.file.originalFilename;
 				fs.writeFile(newPath, data, function (err) {
-					res.send('Upload Complete');
+					if (err) {
+						res.status(400).send('Could not upload file!');
+					}
+					else {
+						res.send('Upload Complete!');
+					}
 				})
 			})
 		},
@@ -30,9 +35,14 @@ module.exports = (function() {
 			}
 
 			var imageBuffer = decodeBase64Image(data);
-			var newPath = "/Users/Jeremy/Desktop/Coding_Dojo/500_myProjects/FastFit360/client/angular/public/images/cropped/" + id + '_cropped.jpg';
+			var newPath = "./client/angular/public/images/cropped/" + id + '_cropped.jpg';
 			fs.writeFile(newPath, imageBuffer.data, function (err) {
-				res.send('Cropped Image Saved');
+				if (err) {
+					res.status(400).send('Could not save file!');
+				}
+				else {
+					res.send('Cropped image has been saved!');
+				}
 			})
 		}
 	}

@@ -577,9 +577,11 @@
                                 break;
                             case "e":
                                 cl = "vline right";
+                                console.log('test');
                                 break;
                             case "w":
-                                cl = "vline"
+                                cl = "vline";
+                                break;
                         }
                         borders[li[i]] = insertBorder(cl)
                     }
@@ -850,7 +852,7 @@
     }, $.Jcrop.defaults = {
         allowSelect: !0,
         allowMove: !0,
-        allowResize: 0, //Modified
+        allowResize: !0,
         trackDocument: !0,
         baseClass: "jcrop",
         addClass: null,

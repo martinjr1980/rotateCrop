@@ -4,7 +4,7 @@
 	<meta charset='utf-8'>
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-	<title>FastFitGallery</title>
+	<title>Gallery</title>
 	<script type="text/javascript" src='angular/public/scripts/angular.min.js'></script>
 	<script type="text/javascript" src='angular/public/scripts/angular-route.min.js'></script>
 
@@ -29,9 +29,10 @@
 	<div id='wrapper' ng-app='galleryApp' ng-controller='PhotoController'>
 		<div id='header'></div>
 		<div id='header1' class='row'>
-			<div class='left'><a class='nav logo' href='#/'>FastFit360 Gallery</a></div>
+			<div class='left'><a class='nav logo' href='#/'>Gallery</a></div>
 			<div class='right'>
 				<p class='nav green'>{{up_success}}</p>
+				<p class='nav red'>{{up_fail}}</p>
 				<p class='nav'>Upload New Photo</p>
 				<button class='long' ng-file-select ng-model="file">Select File</button>
 				<button class='green' ng-click='upload()'>Upload</button>
