@@ -1,0 +1,23 @@
+<div ng-controller='PhotoController'>
+	<div id='container2'>
+		<div id='side-bar'>
+			<h3 class='side-bar'>Rotate</h3>
+			<input type='text' ng-model='angle' class='small'>
+			<div id='slider'>
+				<input class='slider' ng-model="angle"  type="text" id="mySlider1" slider options="options">
+			</div>
+			<h3>Crop</h3>
+			<button ng-click='isHidden = !isHidden'>Crop</button>
+			<button class='green' ng-init='isHidden = true' ng-hide='isHidden' ng-click='crop()'>Save</button>
+			<p class='green'>{{crop_success}}</p>
+		</div>
+		<div id='content'>
+			<div id='frame' ng-show='isHidden'>
+				<img id='full' rotate degrees='angle' ng-src="angular/public/images/{{id}}.jpg">
+			</div>
+			<div id='crop' ng-init='isHidden = true' ng-hide='isHidden'>
+				<img-cropped id='full' info='id' src="angular/public/images/" selected='selected(cords, id)'></img-cropped>
+			</div>
+		</div>
+	</div>
+</div>

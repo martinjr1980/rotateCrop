@@ -1,0 +1,7 @@
+<div ng-controller='PhotoController'>
+	<div id='container'>
+		<a ng-repeat='photo in photos' ng-href="#/photos/{{photo.id}}" ng-click='openPhoto(photo.id)'>
+			<div class='thumb inline' style="background-image: url(angular/public/images/thumbs/{{photo.thumb}})"></div>
+		</a>
+	</div>
+</div>

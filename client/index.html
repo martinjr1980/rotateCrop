@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+	<title>FastFitGallery</title>
+	<script type="text/javascript" src='angular/public/scripts/angular.min.js'></script>
+	<script type="text/javascript" src='angular/public/scripts/angular-route.min.js'></script>
+
+	<script type="text/javascript" src="angular/public/scripts/ng-slider.min.js"></script>
+	<script type="text/javascript" src="angular/public/scripts/angular-file-upload-shim.min.js"></script>
+	<script type="text/javascript" src="angular/public/scripts/angular-file-upload.min.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="angular/public/scripts/jquery.Jcrop.js"></script>
+	<script type="text/javascript" src='angular/app.js'></script>
+	<script type="text/javascript" src='angular/directives/directive.js'></script>
+	<script type="text/javascript" src='angular/controllers/photo-controller.js'></script>
+	<script type="text/javascript" src='angular/services/photo-factory.js'></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="angular/public/stylesheets/ng-slider.css">
+	<link rel="stylesheet" type="text/css" href="angular/public/stylesheets/jquery.Jcrop.min.css">
+	<link rel="stylesheet" type="text/css" href="angular/public/stylesheets/style.css">
+
+</head>
+<body>
+	<div id='wrapper' ng-app='galleryApp' ng-controller='PhotoController'>
+		<div id='header'></div>
+		<div id='header1' class='row'>
+			<div class='left'><a class='nav logo' href='#/'>FastFit360 Gallery</a></div>
+			<div class='right'>
+				<p class='nav green'>{{up_success}}</p>
+				<p class='nav'>Upload New Photo</p>
+				<button class='long' ng-file-select ng-model="file">Select File</button>
+				<button class='green' ng-click='upload()'>Upload</button>
+			</div>
+		</div>
+		<div ng-view=''>
+			<script type="text/javascript">
+				galleryApp.config(function ($routeProvider) {
+					$routeProvider
+						.when('/',
+						{
+							templateUrl: 'angular/partials/index.html'
+						})
+						.when('/photos/:id',
+						{
+							templateUrl: 'angular/partials/photo.html'
+						})
+						.otherwise({ redirectTo: '/' })
+				});
+			</script>
+		</div>
+	</div>
+</body>
+</html>
