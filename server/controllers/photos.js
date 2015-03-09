@@ -69,11 +69,13 @@ module.exports = (function() {
 			var newPath = "./client/angular/public/images/edited/edited_" + name;
 			fs.writeFile(newPath, imageBuffer.data, function (err) {
 				if (err) {
+					console.log('error1', err);
 					res.status(400).send('Could not save file!');
 				}
 				else {
 					Photo.findOne({ _id: id }, function (err, photo) {
 						if (err) {
+							console.log('error2', err);
 							res.status(400).send('Could not save file!');
 						}
 						else {
