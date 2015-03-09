@@ -5,11 +5,15 @@ module.exports = function (app) {
 		res.send('Welcome Home');
 	})
 
+	app.get('/photos.json', function (req, res) {
+		photos.index(req, res);
+	})
+
 	app.post('/upload', function (req, res) {
 		photos.create(req, res);
 	})
 
-	app.post('/crop', function (req, res) {
+	app.post('/update', function (req, res) {
 		photos.update(req, res);
 	})
 }

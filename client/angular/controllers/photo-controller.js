@@ -1,51 +1,32 @@
 galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory) {
 	//Initializations
+	$scope.photos;
 	$scope.angle = "0";
 	adjustLargeImage();
-	$scope.photos = PhotoFactory.getPhotos();
+	PhotoFactory.getPhotos(function (output) {
+		$scope.photos = output;
+	})
 
 	$scope.$on('$routeChangeSuccess', function() {
-		$scope.id = $routeParams.id;
-	});
+		$scope.name = $routeParams.name;
+	});	
 
-	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y;
+	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;
 
-	$scope.selected = function (cords, id) {
-		var crop_canvas,
-			left = cords.x * scale,
-			top = cords.y * scale,
-			width = cords.w * scale,
-			height = cords.h * scale;
-		console.log(left, top, width, height);
-		crop_canvas = document.createElement('canvas');
-		crop_canvas.width = width;
-		crop_canvas.height = height;
-		var image = new Image();
-		image.src = document.getElementById('crop').children[1].src;
-		crop_canvas.getContext('2d').drawImage(image, left, top, width, height, 0, 0, width, height);
-		window.open(crop_canvas.toDataURL('image/jpeg'));
-		// var base64 = crop_canvas.toDataURL('image/jpeg');
-
-		// $scope.crop = function() {
-		// 	PhotoFactory.cropPhoto(id, base64)
-		// 		.success(function (data, satus, headers, config) {
-		// 			$scope.crop_success = data;
-		// 		}).error(function (data, status, headers, config) {
-		// 			$scope.crop_fail = data;
-		// 		})
-		// }
-	};
-
-	var isDragging = false;
+	
+	// Event handler for creating crop window
 	$("#frame")
 	.mousedown(function (e) {
-		console.log(e);
 		x_crop = e.clientX;
 		y_crop = e.clientY;
-		offset_x = e.offsetX;
-		offset_y = e.offsetY;
+		offset_x = x_crop - 200;
+		offset_y = y_crop - 45;
+		frame_left = e.clientX - offset_x;
+		frame_top = e.clientY - offset_y;
+		frame_right = frame_left + e.currentTarget.offsetWidth;
+		frame_bot = frame_top + e.currentTarget.offsetHeight;
 	    $(window).mousemove(function (e) {
-	        isDragging = true;
+	    	$('#select-box').removeClass('hide');
 	        x_crop2 = e.clientX;
 	        y_crop2 = e.clientY;
 	        document.getElementById("select-box").style.left = String(x_crop) + 'px';
@@ -56,66 +37,141 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	    })
 	})
 	.mouseup(function(e) {
-	    var wasDragging = isDragging;
-	    isDragging = false;
-	    $(window).unbind("mousemove");
-	    if (!wasDragging) { //was clicking
-	        $(window).unbind("mousemove");
-	        $('#select-box').width(0).height(0);
-	    }
+		$('#select-box').addClass('hide');
 	});
 
-	$scope.crop2 = function() {
+	// Even handler for moving crop window
+	$('#select-box')
+	.mousedown(function (e) {
+		var box = document.getElementById('select-box');
+		var box_width = parseInt(box.style.width);
+		var box_height = parseInt(box.style.height);
+		var start_x = e.clientX;
+		var start_y = e.clientY;
+		var start_left = start_x - e.offsetX;
+		var start_top = start_y - e.offsetY;
+		$(window).mousemove(function (e) {
+			var box_left = parseInt(box.style.left);
+			var box_right = box_left + box_width;
+			var box_top = parseInt(box.style.top);
+			var box_bot = box_top + box_height;
+
+			var delta_x = e.clientX - start_x;
+		    var delta_y = e.clientY - start_y;
+
+			if (box_left <= frame_left) {
+				if (e.originalEvent.movementX > 0) {
+					start_x = e.clientX;
+					if (start_x <= box_left) {
+						start_left = start_x + (frame_left - e.offsetX);
+					}
+					else {
+						start_left = start_x - e.offsetX;
+					}
+					delta_x = frame_left - start_left + 1;
+				}
+				else {
+					delta_x = frame_left - start_left;
+				}
+			}
+			else if (box_right >= frame_right) {
+				if (e.originalEvent.movementX < 0) {	
+					start_x = e.clientX;
+					if (start_x >= box_right) {
+						start_left = start_x + (frame_right - e.offsetX) - box_width;
+					}
+					else {
+						start_left = start_x - e.offsetX;
+					}
+					delta_x = frame_right - (start_left + box_width) - 1;
+				}
+				else {
+					delta_x = frame_right - (start_left + box_width);
+				}
+			}
+			if (box_top <= frame_top) {
+				if (e.originalEvent.movementY > 0) {
+					start_y = e.clientY;
+					if (start_y <= box_top) {
+						start_top = start_y + (frame_top - e.offsetY);
+					}
+					else {
+						start_top = start_y - e.offsetY;
+					}
+					delta_y = frame_top - start_top + 1;
+				}
+				else {
+					delta_y = frame_top - start_top;
+				}
+			}
+			else if (box_bot >= frame_bot) {
+				if (e.originalEvent.movementY < 0) {
+					start_y = e.clientY;
+					if (start_y >= box_bot) {
+						start_top = start_y + (frame_bot - e.offsetY) - box_height;
+					}
+					else {
+						start_top = start_y - e.offsetY;
+					}
+					delta_y = frame_bot - (start_top + box_height) - 1;
+				}
+				else {
+					delta_y = frame_bot - (start_top + box_height);
+				}
+			}
+		    document.getElementById("select-box").style.left = String(start_left + delta_x) + 'px';
+		    document.getElementById("select-box").style.top = String(start_top + delta_y) + 'px';
+
+		    offset_x = box_left - frame_left;
+		    offset_y = box_top - frame_top;
+		}).mouseup(function (e) {
+			$(window).unbind("mousemove");
+		})
+	})
+
+	$scope.save = function(name) {
 		var image = new Image();
 		image.src = document.getElementById('frame').children[0].src;
 		var scale = image.width / $('#frame').width();
-		var crop_canvas,
-			left = offset_x * scale,
+		var	left = offset_x * scale,
 			top = offset_y * scale,
-			width = (x_crop2 - x_crop) * scale,
-			height = (y_crop2 - y_crop) * scale;
-		crop_canvas = document.createElement('canvas');
-		crop_canvas.width = width;
-		crop_canvas.height = height;
-		crop_canvas.getContext('2d').drawImage(image, left, top, width, height, 0, 0, width, height);
-		window.open(crop_canvas.toDataURL('image/jpeg'));
-	}
+			crop_width = (x_crop2 - x_crop) * scale,
+			crop_height = (y_crop2 - y_crop) * scale;
 
-	$scope.save = function() {
-		var image = new Image();
-		image.src = document.getElementById('frame').children[0].src;
 		var width = image.width;
 		var height = image.height;
-		var canvas = document.createElement('canvas');
 		var angle = $scope.angle * Math.PI / 180;
-		console.log(document.getElementById('frame').width)
-
-		if ($scope.angle == 90 || $scope.angle == 270) {
-			canvas.width = height;
-			canvas.height = width;
-		}
-		else {
-			canvas.width = width;
-			canvas.height = height;
-		}
+		var canvas = document.createElement('canvas');
+		
+		canvas.width = image.width;
+		canvas.height = image.height;
 
 		// Need to translate so you are rotating about the center of image
+		canvas.getContext('2d').save();
 		canvas.getContext('2d').translate(canvas.width/2, canvas.height/2);
 		canvas.getContext('2d').rotate(angle);
-		canvas.getContext('2d').drawImage(image, -width/2, -height/2, width, height);
-		window.open(canvas.toDataURL('image/jpeg'));
+		canvas.getContext('2d').translate(-canvas.width/2, -canvas.height/2);
+		canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
+
+		// Restore from saved state so you can use originla X, Y coords
+		canvas.getContext('2d').restore();
+		image.src = canvas.toDataURL('image/jpeg');
+		canvas.width = crop_width;
+		canvas.height = crop_height;
+		canvas.getContext('2d').translate(-left, -top);
+		canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
+		var base64 = canvas.toDataURL('image/jpeg');
+		PhotoFactory.updatePhoto(name, base64, function (output) {
+			$scope.message = output;
+		})
 	}
 
-	$scope.upload = function() {
-		PhotoFactory.upload($scope.file)
-			.progress(function (evt) {
-	            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-			}).success(function (data, status, headers, config) {
-				$scope.up_success = data;
-				$location.path('/');		  
-			}).error(function (data, status, headers, config) {
-				$scope.up_fail = data;
-			});
+	$scope.uploadPhoto = function() {
+		PhotoFactory.uploadPhoto($scope.file, function (output) {
+			$location.path('/');
+			$scope.message = output;
+		})
+
 	}
 
 	// Temporary way to adjust large image size - need to improve

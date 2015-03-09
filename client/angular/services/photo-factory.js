@@ -1,37 +1,41 @@
-galleryApp.factory('PhotoFactory', function ($upload) {
-	var photos = [
-		{ id: 1, name: '1.jpg', thumb: '1_thumb.jpg', cropped: false },
-		{ id: 2, name: '2.jpg', thumb: '2_thumb.jpg', cropped: false },
-		{ id: 3, name: '3.jpg', thumb: '3_thumb.jpg', cropped: false },
-		{ id: 4, name: '4.jpg', thumb: '4_thumb.jpg', cropped: false },
-		{ id: 5, name: '5.jpg', thumb: '5_thumb.jpg', cropped: false },
-		{ id: 6, name: '6.jpg', thumb: '6_thumb.jpg', cropped: false },
-		{ id: 7, name: '7.jpg', thumb: '7_thumb.jpg', cropped: false },
-		{ id: 8, name: '8.jpg', thumb: '8_thumb.jpg', cropped: false },
-		{ id: 9, name: '9.jpg', thumb: '9_thumb.jpg', cropped: false },
-		{ id: 10, name: '10.jpg', thumb: '10_thumb.jpg', cropped: false }
-	];
-	var id = 10;
+galleryApp.factory('PhotoFactory', function ($upload, $http) {
+	var photos = [];
 	var factory = {};
 
-	factory.getPhotos = function() {
-		return photos;
+	factory.getPhotos = function (callback) {
+		$http.get('/photos.json').success(function (data) {
+			photos = data;
+			callback(photos);
+		});
 	}
 
-	factory.cropPhoto = function(id, base64) {
-		return $upload.upload({
-			url: 'crop',
-			method: 'POST',
-			data: { id: id, base64: base64 }
-		})
+	factory.updatePhoto = function(name, base64, callback) {
+		$upload.upload({ url: 'update', method: 'POST', data: { name: name, base64: base64 }})
+			.success(function (data, status, headers, config) {
+				for (var i in photos) {
+					if (photos[i].name == data.name) {
+						photos[i].name = data;
+					}
+				}
+				var message = { update_success: 'Image has been saved!' };
+				callback(message);
+			}).error(function (data, status, headers, config) {
+				var message = { update_fail: 'Could not save file!' };
+			});
 	}
 
-	factory.upload = function(file) {
-		return $upload.upload({
-            url: 'upload',
-            method: 'POST',
-            file: file
-        })
+	factory.uploadPhoto = function(file, callback) {
+		$upload.upload({ url: 'upload', method: 'POST', file: file })
+			.progress(function (evt) {
+	            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+			}).success(function (data, status, headers, config) {
+				photos.push(data);
+				console.log(photos);
+				var message = { up_success: 'Upload complete!' };
+				callback(message);
+			}).error(function (data, status, headers, config) {
+				var message = { up_fail: 'Upload failed!' };
+			});
 	}
 
 	return factory;

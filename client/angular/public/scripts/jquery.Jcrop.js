@@ -577,7 +577,6 @@
                                 break;
                             case "e":
                                 cl = "vline right";
-                                console.log('test');
                                 break;
                             case "w":
                                 cl = "vline";
