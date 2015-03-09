@@ -4,17 +4,23 @@
 			<h3 class='side-bar'>Rotate</h3>
 			<input type='text' ng-model='angle' class='small'>
 			<div id='slider'>
-				<input class='slider' ng-model="angle"  type="text" id="mySlider1" slider options="options">
+				<input class='slider' ng-model="angle" type="text" id="mySlider1" slider options="options">
 			</div>
 			<h3>Rotate</h3>
 			<p>Use cursor to crop image</p>
-			<button class='green' ng-click='save(name)'>Save</button>
-			<p class='green'>{{message.update_success}}</p>
-			<p class='red'>{{message.update_fail}}</p>
+			<button class='green' ng-click='save(current_photo)'>Save</button>
+			<p id='save-status' class='inline hide'>Saving...</p><img id='upload' class='hide' src='angular/public/images/uploading.gif' height=25 width=25>
+			<p class='green margin-top'>{{message.update_success}}</p>
+			<p class='red margin-top'>{{message.update_fail}}</p>
+			<div id='see-edit' ng-show='current_photo.edited == true'>
+				<h3>View Edited Photo</h3>
+				<button ng-click='isHidden = !isHidden'>See!</button>
+			</div>
 		</div>
 		<div id='content'>
 			<div id='frame'>
-				<img id='full' rotate degrees='angle' ng-src="angular/public/images/{{name}}">
+				<img id='full' ng-init='!isHidden' ng-show='!isHidden' rotate degrees='angle' ng-src="angular/public/images/{{name}}">
+				<img id='edited-photo' ng-hide='!isHidden' ng-show='current_photo.edited == true' ng-src="angular/public/images/edited/edited_{{name}}">
 			</div>
 			<div id='select-box' class='hide'></div>
 		</div>

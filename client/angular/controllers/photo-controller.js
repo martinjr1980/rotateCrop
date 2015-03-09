@@ -1,6 +1,7 @@
 galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory) {
 	//Initializations
-	$scope.photos;
+	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;
+	$scope.current_photo = JSON.parse(localStorage.current_photo);
 	$scope.angle = "0";
 	adjustLargeImage();
 	PhotoFactory.getPhotos(function (output) {
@@ -9,11 +10,16 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 	$scope.$on('$routeChangeSuccess', function() {
 		$scope.name = $routeParams.name;
-	});	
+	});
 
-	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;
+	$scope.openPhoto = function (name) {
+		for (var i in $scope.photos) {
+			if ($scope.photos[i].name == name) {
+				localStorage.current_photo = JSON.stringify($scope.photos[i]);
+			}
+		}
+	}
 
-	
 	// Event handler for creating crop window
 	$("#frame")
 	.mousedown(function (e) {
@@ -129,7 +135,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		})
 	})
 
-	$scope.save = function(name) {
+	$scope.save = function(photo) {
 		var image = new Image();
 		image.src = document.getElementById('frame').children[0].src;
 		var scale = image.width / $('#frame').width();
@@ -161,8 +167,9 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		canvas.getContext('2d').translate(-left, -top);
 		canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
 		var base64 = canvas.toDataURL('image/jpeg');
-		PhotoFactory.updatePhoto(name, base64, function (output) {
-			$scope.message = output;
+		PhotoFactory.updatePhoto(photo, base64, function (output) {
+			$scope.message = output.message;
+			localStorage.current_photo = JSON.stringify(output.photo);
 		})
 	}
 

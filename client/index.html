@@ -33,7 +33,8 @@
 			<div class='right'>
 				<p class='nav green'>{{message.up_success}}</p>
 				<p class='nav red'>{{message.up_fail}}</p>
-				<p class='nav'>Upload New Photo</p>
+				<img id='upload' class='hide' src='angular/public/images/uploading.gif' height=25 width=25>
+				<p id ='up-status' class='nav'>Upload New Photo</p>
 				<button class='long' ng-file-select ng-model="file">Select File</button>
 				<button class='green' ng-click='uploadPhoto()'>Upload</button>
 			</div>

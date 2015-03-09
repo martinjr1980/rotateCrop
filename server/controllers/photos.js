@@ -49,6 +49,7 @@ module.exports = (function() {
 		update: function (req, res) {
 			var data = JSON.parse(req.body.data).base64;
 			var name = JSON.parse(req.body.data).name;
+			var id = JSON.parse(req.body.data).id;
 
 			function decodeBase64Image(dataString) {
 				var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
@@ -71,7 +72,7 @@ module.exports = (function() {
 					res.status(400).send('Could not save file!');
 				}
 				else {
-					Photo.findOne({ name: name }, function (err, photo) {
+					Photo.findOne({ _id: id }, function (err, photo) {
 						if (err) {
 							res.status(400).send('Could not save file!');
 						}
