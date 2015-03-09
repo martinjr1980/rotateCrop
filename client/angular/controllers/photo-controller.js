@@ -170,6 +170,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		canvas.getContext('2d').translate(-left, -top);
 		canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
 		var base64 = canvas.toDataURL('image/jpeg');
+		$scope.message = {};
 		PhotoFactory.updatePhoto(photo, base64, function (output) {
 			$scope.message = output.message;
 			localStorage.current_photo = JSON.stringify(output.photo);
@@ -177,6 +178,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	}
 
 	$scope.uploadPhoto = function() {
+		$scope.message = {};
 		PhotoFactory.uploadPhoto($scope.file, function (output) {
 			$location.path('/');
 			$scope.message = output;

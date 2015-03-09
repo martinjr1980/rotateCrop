@@ -12,7 +12,7 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 	factory.updatePhoto = function(photo, base64, callback) {
 		$upload.upload({ url: 'update', method: 'POST', data: { id: photo._id, name: photo.name, base64: base64 }})
 			.progress(function (evt) {
-				$('#upload').removeClass('hide');
+				$('#update').removeClass('hide');
 				$('#save-status').removeClass('hide');
 			}).success(function (data, status, headers, config) {
 				for (var i in photos) {
@@ -20,13 +20,13 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 						photos[i] = data;
 					}
 				}
-				$('#upload').addClass('hide');
+				$('#update').addClass('hide');
 				$('#save-status').addClass('hide');
 				// var message = { update_success: 'Image has been saved!' };
 				var update = { photo: data, message: { update_success: 'Image has been saved!' } };
 				callback(update);
 			}).error(function (data, status, headers, config) {
-				$('#upload').addClass('hide');
+				$('#update').addClass('hide');
 				$('#save-status').addClass('hide');
 				var message = { update_fail: 'Could not save file!' };
 			});
