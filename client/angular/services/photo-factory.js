@@ -28,12 +28,14 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 		$upload.upload({ url: 'upload', method: 'POST', file: file })
 			.progress(function (evt) {
 	            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+	            console.log(progressPercentage);
 			}).success(function (data, status, headers, config) {
 				photos.push(data);
 				console.log(photos);
 				var message = { up_success: 'Upload complete!' };
 				callback(message);
 			}).error(function (data, status, headers, config) {
+				console.log(data);
 				var message = { up_fail: 'Upload failed!' };
 			});
 	}
