@@ -26,6 +26,7 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 				var update = { photo: data, message: { update_success: 'Image has been saved!' } };
 				callback(update);
 			}).error(function (data, status, headers, config) {
+				console.log(data);
 				$('#update').addClass('hide');
 				$('#save-status').addClass('hide');
 				var message = { update_fail: 'Could not save file!' };
