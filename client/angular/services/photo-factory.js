@@ -47,6 +47,7 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 			}).error(function (data, status, headers, config) {
 				$('#upload').addClass('hide');
 				$('#up-status').text('Upload New Photo');
+				console.log(data);
 				var message = { up_fail: 'Upload failed!' };
 			});
 	}
