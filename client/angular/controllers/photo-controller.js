@@ -1,7 +1,6 @@
 galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory) {
 	//Initializations
-	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;
-	$scope.current_photo = JSON.parse(localStorage.current_photo);
+	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
 	$scope.angle = "0";
 	adjustLargeImage();
 	PhotoFactory.getPhotos(function (output) {
@@ -11,6 +10,10 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	$scope.$on('$routeChangeSuccess', function() {
 		$scope.name = $routeParams.name;
 	});
+
+	if (localStorage.current_photo !== JSON.stringify({}) && localStorage.current_photo) {
+		$scope.current_photo = JSON.parse(localStorage.current_photo);
+	}
 
 	$scope.openPhoto = function (name) {
 		for (var i in $scope.photos) {
