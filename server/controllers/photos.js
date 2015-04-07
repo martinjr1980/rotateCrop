@@ -2,6 +2,14 @@ var fs = require('fs');
 var gm = require('gm').subClass({ imageMagick: true });
 var Photo = require('./../models/photo');
 
+var aws = require('aws-sdk');
+var AWS_ACCESS_KEY = 'AKIAIFRHIWJYBJFGAZ6A';
+var AWS_SECRET_KEY = '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';
+var S3_BUCKET = 'fastfit';
+aws.config.update({accessKeyId: AWS_ACCESS_KEY , secretAccessKey: AWS_SECRET_KEY });
+
+var s3 = new aws.S3();
+
 module.exports = (function() {
 	return {
 		index: function (req, res) {
@@ -13,34 +21,76 @@ module.exports = (function() {
 		create: function (req, res) {
 			fs.readFile(req.files.file.path, function (err, data) {
 				var newPath = "./client/angular/public/images/" + req.files.file.originalFilename;
-				fs.writeFile(newPath, data, function (err) {
+				// fs.writeFile(newPath, data, function (err) {
+				s3.putObject({
+					ACL: 'public-read',
+				    Bucket: S3_BUCKET,
+				    Key: req.files.file.originalFilename,
+				    Body: data,
+				    ContentType: 'image/png'
+				}, function (err) {
 					if (err) {
 						res.status(400).send('Could not upload file!');
 					}
 					else {
 						var size = { width: 200, height: 200 };
-						gm(newPath)
+						// gm(newPath)
+						gm(req.files.file.path)
 							.resize(size.width, size.height + "^")
 							.gravity('Center')
 							.extent(size.width, size.height)
-							.write("./client/angular/public/images/thumbs/thumb_" + req.files.file.originalFilename, function (err) {
-								if (err) {
-									res.status(400).send('Could not save file!');
-								}
-								else {
-									var photo = new Photo();
-									photo.name = req.files.file.originalFilename;
-									photo.created_at = new Date();
-									photo.save(function (err) {
-										if (err) {
-											res.status(400).send('Could not save file!');
-										} 
-										else {
-											res.json(photo);
-										}
-									})
-								}
+							.stream(function (err, stdout, stderr) {
+								var buf = new Buffer('');
+								stdout.on('data', function (data) {
+									buf = Buffer.concat([buf, data]);
+								})
+								stdout.on('end', function (data) {
+									s3.putObject({
+										ACL: 'public-read',
+									    Bucket: S3_BUCKET,
+									    Key: 'thumbs/thumb_' + req.files.file.originalFilename,
+									    Body: buf,
+									    ContentType: 'image/png'
+									}, function (err, response) {
+											if (err) {
+												res.status(400).send('Could not save file!');
+											}
+											else {
+												var photo = new Photo();
+												photo.name = req.files.file.originalFilename;
+												photo.created_at = new Date();
+												photo.save(function (err) {
+													if (err) {
+														res.status(400).send('Could not save file!');
+													} 
+													else {
+														res.json(photo);
+													}
+												})
+											}
+										})
+								})
+								
 							})
+						
+							// .write("./client/angular/public/images/thumbs/thumb_" + req.files.file.originalFilename, function (err) {
+							// 	if (err) {
+							// 		res.status(400).send('Could not save file!');
+							// 	}
+							// 	else {
+							// 		var photo = new Photo();
+							// 		photo.name = req.files.file.originalFilename;
+							// 		photo.created_at = new Date();
+							// 		photo.save(function (err) {
+							// 			if (err) {
+							// 				res.status(400).send('Could not save file!');
+							// 			} 
+							// 			else {
+							// 				res.json(photo);
+							// 			}
+							// 		})
+							// 	}
+							// })
 					}
 				})
 			})
