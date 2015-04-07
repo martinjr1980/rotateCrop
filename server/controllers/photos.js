@@ -3,6 +3,9 @@ var gm = require('gm').subClass({ imageMagick: true });
 var Photo = require('./../models/photo');
 
 var aws = require('aws-sdk');
+// var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+// var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+// var S3_BUCKET = process.env.S3_BUCKET;
 var AWS_ACCESS_KEY = 'AKIAIFRHIWJYBJFGAZ6A';
 var AWS_SECRET_KEY = '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';
 var S3_BUCKET = 'fastfit';

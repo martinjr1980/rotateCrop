@@ -25,7 +25,7 @@ p.green { color: #33FF33; }
 p.red { color: red; }
 input.small { height: 30px; width: 30px; margin-bottom: 20px; border: 1px solid black; border-radius: 15px; text-align: center; }
 
-div.thumb { height: 200px; width: 200px; background-size: cover; margin: 10px; border: 1px solid white; border-radius: 5px; box-shadow: 0 0 20px #000000; }
+img.thumb { height: 200px; width: 200px; background-size: cover; margin: 10px; border: 1px solid white; border-radius: 5px; box-shadow: 0 0 20px #000000; }
 #frame { overflow: hidden; }
 img#full { border: 1px solid white; background-size: cover; cursor: crosshair; }
 
