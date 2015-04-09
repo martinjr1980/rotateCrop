@@ -75,25 +75,7 @@ module.exports = (function() {
 								})
 								
 							})
-						
-							// .write("./client/angular/public/images/thumbs/thumb_" + req.files.file.originalFilename, function (err) {
-							// 	if (err) {
-							// 		res.status(400).send('Could not save file!');
-							// 	}
-							// 	else {
-							// 		var photo = new Photo();
-							// 		photo.name = req.files.file.originalFilename;
-							// 		photo.created_at = new Date();
-							// 		photo.save(function (err) {
-							// 			if (err) {
-							// 				res.status(400).send('Could not save file!');
-							// 			} 
-							// 			else {
-							// 				res.json(photo);
-							// 			}
-							// 		})
-							// 	}
-							// })
+
 					}
 				})
 			})
@@ -120,7 +102,14 @@ module.exports = (function() {
 
 			var imageBuffer = decodeBase64Image(data);
 			var newPath = "./client/angular/public/images/edited/edited_" + name;
-			fs.writeFile(newPath, imageBuffer.data, function (err) {
+			// fs.writeFile(newPath, imageBuffer.data, function (err) {
+			s3.putObject({
+				ACL: 'public-read',
+			    Bucket: S3_BUCKET,
+			    Key: 'edited/edited_' + req.files.file.originalFilename,
+			    Body: imageBuffer.data,
+			    ContentType: 'image/png'
+			}, function (err) {
 				if (err) {
 					console.log('error1', err);
 					res.status(400).send('Could not save file!');

@@ -2,7 +2,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	//Initializations
 	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
 	$scope.angle = "0";
-	adjustLargeImage();
 	PhotoFactory.getPhotos(function (output) {
 		$scope.photos = output;
 	})
@@ -13,12 +12,18 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 	if (localStorage.current_photo !== JSON.stringify({}) && localStorage.current_photo) {
 		$scope.current_photo = JSON.parse(localStorage.current_photo);
+		adjustLargeImage();
 	}
 
 	$scope.openPhoto = function (name) {
 		for (var i in $scope.photos) {
 			if ($scope.photos[i].name == name) {
+				var image = new Image();
+				image.src = 'https://s3-us-west-1.amazonaws.com/fastfit/' + $scope.photos[i].name;
+				$scope.photos[i].height = image.height;
+				$scope.photos[i].width = image.width;
 				localStorage.current_photo = JSON.stringify($scope.photos[i]);
+				adjustLargeImage();
 			}
 		}
 	}
@@ -140,6 +145,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 	$scope.save = function(photo) {
 		var image = new Image();
+		image.setAttribute('crossOrigin', 'anonymous');
 		image.src = document.getElementById('frame').children[0].src;
 		var scale = image.width / $('#frame').width();
 		var	left = offset_x * scale,
@@ -149,6 +155,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 		var width = image.width;
 		var height = image.height;
+		console.log(image.src);
 		var angle = $scope.angle * Math.PI / 180;
 		var canvas = document.createElement('canvas');
 		
@@ -165,6 +172,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		// Restore from saved state so you can use originla X, Y coords
 		canvas.getContext('2d').restore();
 		image.src = canvas.toDataURL('image/jpeg');
+		console.log(image);
 		canvas.width = crop_width;
 		canvas.height = crop_height;
 		canvas.getContext('2d').translate(-left, -top);
@@ -188,8 +196,21 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 	// Temporary way to adjust large image size - need to improve
 	function adjustLargeImage() {
-		var width = $(window).width()-400;
-		var height = (1360 / 2048) * ($(window).width()-400);
+		var win_width = $(window).width() - $('#side-bar').width();
+		var win_height = $(window).height() - $('#header').height();
+		
+		var height = JSON.parse(localStorage.current_photo).height;
+		var width = JSON.parse(localStorage.current_photo).width;
+		
+
+		if ( win_width / width > win_height / height ) {
+			var ratio = win_height / height;
+		} else {
+			var ratio = win_width / width;
+		}
+		width = width * ratio * 0.9;
+		height = height * ratio * 0.9;
+
 		$('#frame').css({ width: width, height: height });
 		$('#full').css({ width: width, height: height });
 	}
