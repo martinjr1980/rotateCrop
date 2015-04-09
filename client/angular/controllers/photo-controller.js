@@ -18,10 +18,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	$scope.openPhoto = function (name) {
 		for (var i in $scope.photos) {
 			if ($scope.photos[i].name == name) {
-				var image = new Image();
-				image.src = 'https://s3-us-west-1.amazonaws.com/fastfit/' + $scope.photos[i].name;
-				$scope.photos[i].height = image.height;
-				$scope.photos[i].width = image.width;
 				localStorage.current_photo = JSON.stringify($scope.photos[i]);
 				adjustLargeImage();
 			}
@@ -178,11 +174,12 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		canvas.getContext('2d').translate(-left, -top);
 		canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
 		var base64 = canvas.toDataURL('image/jpeg');
+		console.log(base64);
 		$scope.message = {};
-		PhotoFactory.updatePhoto(photo, base64, function (output) {
-			$scope.message = output.message;
-			localStorage.current_photo = JSON.stringify(output.photo);
-		})
+		// PhotoFactory.updatePhoto(photo, base64, function (output) {
+		// 	$scope.message = output.message;
+		// 	localStorage.current_photo = JSON.stringify(output.photo);
+		// })
 	}
 
 	$scope.uploadPhoto = function() {
@@ -198,11 +195,10 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	function adjustLargeImage() {
 		var win_width = $(window).width() - $('#side-bar').width();
 		var win_height = $(window).height() - $('#header').height();
+		var img = JSON.parse(localStorage.current_photo);
+		var height = img.height;
+		var width = img.width;	
 		
-		var height = JSON.parse(localStorage.current_photo).height;
-		var width = JSON.parse(localStorage.current_photo).width;
-		
-
 		if ( win_width / width > win_height / height ) {
 			var ratio = win_height / height;
 		} else {
@@ -213,6 +209,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 		$('#frame').css({ width: width, height: height });
 		$('#full').css({ width: width, height: height });
+
 	}
 
 	// Options for rotate directive
