@@ -218,15 +218,23 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		} else {
 			var ratio = win_width / width;
 		}
+		console.log(ratio);
 		width = width * ratio * 0.9;
 		height = height * ratio * 0.9;
 
 		// $('#frame').css({ width: width, height: height });
 		$('#full').css({ width: width, height: height });
 
-		if (img.edit === true) {
+		if (img.edited === true) {
+			if (win_width / img.edit_width > win_height / img.edit_height) {
+				ratio = win_height / img.edit_height;
+			} else {
+				ratio = win_width / img.edit_width;
+			}
+			
 			var edit_height = img.edit_height * ratio * 0.9;
 			var edit_width = img.edit_width * ratio * 0.9;
+
 			$('#edited-photo').css({ width: edit_width, height: edit_height });
 		}
 	}
