@@ -13,15 +13,15 @@
 			<p class='green margin-top'>{{message.update_success}}</p>
 			<p class='red margin-top'>{{message.update_fail}}</p>
 			<div id='see-edit' ng-show='current_photo.edited == true'>
-				<h3>View Edited Photo</h3>
-				<button ng-click='isHidden = !isHidden'>See!</button>
+			<!-- <div id='see-edit'> -->
+				<button class='longest' ng-init='!isHidden' ng-click='isHidden = !isHidden'><span ng-show='!isHidden'>See Edited Photo</span><span ng-hide='!isHidden'>See Original Photo</span></button>
 			</div>
 		</div>
 		<div id='content'>
-			<div id='frame'>
+			<!-- <div id='frame'> -->
 				<img id='full' ng-init='!isHidden' ng-show='!isHidden' rotate degrees='angle' ng-src="https://s3-us-west-1.amazonaws.com/fastfit/{{name}}">
-				<img id='edited-photo' ng-hide='!isHidden' ng-show='current_photo.edited == true' ng-src="https://s3-us-west-1.amazonaws.com/fastfit/{{name}}">
-			</div>
+				<img id='edited-photo' ng-hide='!isHidden' ng-show='current_photo.edited == true' ng-src="https://s3-us-west-1.amazonaws.com/fastfit/edited/edited_{{name}}">
+			<!-- </div> -->
 			<div id='select-box' class='hide'></div>
 		</div>
 	</div>

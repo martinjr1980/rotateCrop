@@ -20,6 +20,7 @@ p.nav { margin-right: 10px; display: inline-block; font-size: 15px; color: #33CC
 
 button { height: 25px; width: 60px; border: 1px solid black; border-radius: 3px; background-color: #80B2FF; }
 button.long { width: 80px; }
+button.longest { width: 160px; }
 button.green { background-color: #33FF33; }
 p.green { color: #33FF33; }
 p.red { color: red; }

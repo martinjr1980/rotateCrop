@@ -1,6 +1,6 @@
-galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory) {
+galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory, $window, $route) {
 	//Initializations
-	var x_crop, y_crop, x_crop2, ycrop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
+	var x_crop, y_crop, x_crop2, y_crop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
 	$scope.angle = "0";
 	PhotoFactory.getPhotos(function (output) {
 		$scope.photos = output;
@@ -25,7 +25,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	}
 
 	// Event handler for creating crop window
-	$("#frame")
+	$("#full")
 	.mousedown(function (e) {
 		x_crop = e.clientX;
 		y_crop = e.clientY;
@@ -140,10 +140,16 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	})
 
 	$scope.save = function(photo) {
+		if (y_crop2 === undefined || x_crop2 === undefined) {
+			$scope.message = { update_fail: 'Please define crop area first' };
+			return;
+		}
+
 		var image = new Image();
-		image.setAttribute('crossOrigin', 'anonymous');
-		image.src = document.getElementById('frame').children[0].src;
-		var scale = image.width / $('#frame').width();
+		// image.crossOrigin = 'anonymous';
+		image.src = document.getElementById('full').src;
+
+		var scale = image.width / $('#full').width();
 		var	left = offset_x * scale,
 			top = offset_y * scale,
 			crop_width = (x_crop2 - x_crop) * scale,
@@ -151,35 +157,43 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 		var width = image.width;
 		var height = image.height;
-		console.log(image.src);
+		
 		var angle = $scope.angle * Math.PI / 180;
 		var canvas = document.createElement('canvas');
 		
 		canvas.width = image.width;
 		canvas.height = image.height;
 
+		var data = { angle: $scope.angle, x: left, y: top, width: crop_width, height: crop_height };
+
 		// Need to translate so you are rotating about the center of image
-		canvas.getContext('2d').save();
-		canvas.getContext('2d').translate(canvas.width/2, canvas.height/2);
-		canvas.getContext('2d').rotate(angle);
-		canvas.getContext('2d').translate(-canvas.width/2, -canvas.height/2);
-		canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
+		// canvas.getContext('2d').save();
+		// canvas.getContext('2d').translate(canvas.width/2, canvas.height/2);
+		// canvas.getContext('2d').rotate(angle);
+		// canvas.getContext('2d').translate(-canvas.width/2, -canvas.height/2);
+		// canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
 
 		// Restore from saved state so you can use originla X, Y coords
-		canvas.getContext('2d').restore();
-		image.src = canvas.toDataURL('image/jpeg');
-		console.log(image);
-		canvas.width = crop_width;
-		canvas.height = crop_height;
-		canvas.getContext('2d').translate(-left, -top);
-		canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
-		var base64 = canvas.toDataURL('image/jpeg');
-		console.log(base64);
+		// canvas.getContext('2d').restore();
+		// image.src = canvas.toDataURL('image/jpeg');
+		// console.log(image);
+		// canvas.width = crop_width;
+		// canvas.height = crop_height;
+		// canvas.getContext('2d').translate(-left, -top);
+		// canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
+		// var base64 = canvas.toDataURL('image/jpeg');
+		
 		$scope.message = {};
 		// PhotoFactory.updatePhoto(photo, base64, function (output) {
 		// 	$scope.message = output.message;
 		// 	localStorage.current_photo = JSON.stringify(output.photo);
 		// })
+
+		PhotoFactory.updatePhoto(photo, data, function (output) {
+			$window.location.reload();
+			// $scope.message = output.message;
+			localStorage.current_photo = JSON.stringify(output.photo);
+		})
 	}
 
 	$scope.uploadPhoto = function() {
@@ -197,8 +211,8 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		var win_height = $(window).height() - $('#header').height();
 		var img = JSON.parse(localStorage.current_photo);
 		var height = img.height;
-		var width = img.width;	
-		
+		var width = img.width;
+
 		if ( win_width / width > win_height / height ) {
 			var ratio = win_height / height;
 		} else {
@@ -207,9 +221,14 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		width = width * ratio * 0.9;
 		height = height * ratio * 0.9;
 
-		$('#frame').css({ width: width, height: height });
+		// $('#frame').css({ width: width, height: height });
 		$('#full').css({ width: width, height: height });
 
+		if (img.edit === true) {
+			var edit_height = img.edit_height * ratio * 0.9;
+			var edit_width = img.edit_width * ratio * 0.9;
+			$('#edited-photo').css({ width: edit_width, height: edit_height });
+		}
 	}
 
 	// Options for rotate directive
