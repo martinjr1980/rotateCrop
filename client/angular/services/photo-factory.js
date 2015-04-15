@@ -9,30 +9,8 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 		});
 	}
 
-	factory.updatePhoto = function(photo, base64, callback) {
-		// $upload.upload({ url: 'update', method: 'POST', data: { id: photo._id, name: photo.name, base64: base64 }})
-			// .progress(function (evt) {
-			// 	$('#update').removeClass('hide');
-			// 	$('#save-status').removeClass('hide');
-		// 	}).success(function (data, status, headers, config) {
-		// 		for (var i in photos) {
-		// 			if (photos[i]._id == data._id) {
-		// 				photos[i] = data;
-		// 			}
-		// 		}
-		// 		$('#update').addClass('hide');
-		// 		$('#save-status').addClass('hide');
-		// 		// var message = { update_success: 'Image has been saved!' };
-		// 		var update = { photo: data, message: { update_success: 'Image has been saved!' } };
-		// 		callback(update);
-		// 	}).error(function (data, status, headers, config) {
-		// 		console.log(data);
-		// 		$('#update').addClass('hide');
-		// 		$('#save-status').addClass('hide');
-		// 		var message = { update_fail: 'Could not save file!' };
-		// 	});
-
-		$upload.upload({ url: 'update', method: 'POST', data: { id: photo._id, name: photo.name, data: base64 }})
+	factory.updatePhoto = function(photo, data, callback) {
+		$upload.upload({ url: 'update', method: 'POST', data: { id: photo._id, name: photo.name, data: data }})
 			.progress(function (evt) {
 				$('#update').removeClass('hide');
 				$('#save-status').removeClass('hide');
@@ -44,11 +22,9 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 				}
 				$('#update').addClass('hide');
 				$('#save-status').addClass('hide');
-				// var message = { update_success: 'Image has been saved!' };
 				var update = { photo: data, message: { update_success: 'Image has been saved!' } };
 				callback(update);
 			}).error(function (data, status, headers, config) {
-				console.log(data);
 				$('#update').addClass('hide');
 				$('#save-status').addClass('hide');
 				var message = { update_fail: 'Could not save file!' };
@@ -70,7 +46,6 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 			}).error(function (data, status, headers, config) {
 				$('#upload').addClass('hide');
 				$('#up-status').text('Upload New Photo');
-				console.log(data);
 				var message = { up_fail: 'Upload failed!' };
 			});
 	}

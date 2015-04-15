@@ -27,8 +27,8 @@ p.red { color: red; }
 input.small { height: 30px; width: 30px; margin-bottom: 20px; border: 1px solid black; border-radius: 15px; text-align: center; }
 
 img.thumb { height: 200px; width: 200px; background-size: cover; margin: 10px; border: 1px solid white; border-radius: 5px; box-shadow: 0 0 20px #000000; }
-#frame { height: 100%; margin: 0px auto;}
-img#full {  background-size: cover; cursor: crosshair; }
+#frame { height: 100%; margin: 0px auto; padding: 4% 0px;}
+img#full { background-size: cover; cursor: crosshair; }
 
 .side-bar { margin-top: 50px; }
 .hide { display: none; }

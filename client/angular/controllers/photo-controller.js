@@ -19,7 +19,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		for (var i in $scope.photos) {
 			if ($scope.photos[i].name == name) {
 				localStorage.current_photo = JSON.stringify($scope.photos[i]);
-				adjustLargeImage();
 			}
 		}
 	}
@@ -27,26 +26,20 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	// Event handler for creating crop window
 	$("#full")
 	.mousedown(function (e) {
-		console.log(e);
+		var bound = document.getElementById('full').getBoundingClientRect();
+
 		x_crop = e.clientX;
 		y_crop = e.clientY;
 		orig_left = e.currentTarget.offsetLeft;
 		orig_top = e.currentTarget.offsetTop
 		offset_x = x_crop - orig_left;
 		offset_y = y_crop - orig_top;
-		var bound = document.getElementById('full').getBoundingClientRect();
+
 		frame_left = Math.round(bound.left);
 		frame_top = Math.round(bound.top);
 		frame_right = Math.round(bound.right);
 		frame_bot = Math.round(bound.bottom);
 
-		// offset_x = x_crop - 200;
-		// offset_y = y_crop - 45;
-		// frame_left = e.clientX - offset_x;
-		// frame_top = e.clientY - offset_y;
-		// frame_right = frame_left + e.currentTarget.offsetWidth;
-		// frame_bot = frame_top + e.currentTarget.offsetHeight;
-		// console.log(frame_left, frame_top, frame_right, frame_bot);
 	    $(window).mousemove(function (e) {
 	    	$('#select-box').removeClass('hide');
 	        x_crop2 = e.clientX;
@@ -64,7 +57,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		y_crop2 = undefined;
 	});
 
-	// Even handler for moving crop window
+	// Event handler for moving crop window
 	$('#select-box')
 	.mousedown(function (e) {
 		var box = document.getElementById('select-box');
@@ -74,6 +67,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		var start_y = e.clientY;
 		var start_left = start_x - e.offsetX;
 		var start_top = start_y - e.offsetY;
+
 		$(window).mousemove(function (e) {
 			var box_left = parseInt(box.style.left);
 			var box_right = box_left + box_width;
@@ -148,8 +142,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 		    offset_x = box_left - orig_left;
 		    offset_y = box_top - orig_top;
-		    // offset_x = box_left - frame_left;
-		    // offset_y = box_top - frame_top;
 		}).mouseup(function (e) {
 			$(window).unbind("mousemove");
 		})
@@ -170,24 +162,18 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		
 		var angle = $scope.angle * Math.PI / 180;
 
-		// if (document.getElementById('full').getBoundingClientRect) {
-			var bound = document.getElementById('full').getBoundingClientRect();
-			if ($scope.angle == 90 || $scope.angle == 270) {
-				console.log(offset_x, orig_left, bound.left);
-				console.log(offset_y, orig_top, bound.top, scale);
-				left = (offset_x + orig_left - bound.left) * scale;
-				top = (offset_y + orig_top - bound.top) * scale
-			}
-		// }
+		var bound = document.getElementById('full').getBoundingClientRect();
+		if ($scope.angle == 90 || $scope.angle == 270) {
+			left = (offset_x + orig_left - bound.left) * scale;
+			top = (offset_y + orig_top - bound.top) * scale
+		}
 
 		var data = { angle: $scope.angle, x: left, y: top, crop_width: crop_width, crop_height: crop_height, crop: crop };
-		console.log(data);
-
 		$scope.message = {};
 
 		PhotoFactory.updatePhoto(photo, data, function (output) {
-			// $window.location.reload();
-			// $scope.message = output.message;
+			$window.location.reload();
+			$scope.message = output.message;
 			localStorage.current_photo = JSON.stringify(output.photo);
 		})
 	}
@@ -203,8 +189,8 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 	// Temporary way to adjust large image size - need to improve
 	function adjustLargeImage() {
-		var win_width = $(window).width() - 200;
-		var win_height = $(window).height() - 45;
+		var win_width = $(window).width() - $('#side-bar').outerWidth();
+		var win_height = $(window).height() - $('#header').outerHeight();
 		var img = JSON.parse(localStorage.current_photo);
 		var height = img.height;
 		var width = img.width;
