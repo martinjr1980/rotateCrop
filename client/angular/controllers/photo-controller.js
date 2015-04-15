@@ -1,6 +1,6 @@
 galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory, $window, $route) {
 	//Initializations
-	var x_crop, y_crop, x_crop2, y_crop2, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
+	var x_crop, y_crop, x_crop2, y_crop2, orig_left, orig_top, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
 	$scope.angle = "0";
 	PhotoFactory.getPhotos(function (output) {
 		$scope.photos = output;
@@ -27,14 +27,26 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	// Event handler for creating crop window
 	$("#full")
 	.mousedown(function (e) {
+		console.log(e);
 		x_crop = e.clientX;
 		y_crop = e.clientY;
-		offset_x = x_crop - 200;
-		offset_y = y_crop - 45;
-		frame_left = e.clientX - offset_x;
-		frame_top = e.clientY - offset_y;
-		frame_right = frame_left + e.currentTarget.offsetWidth;
-		frame_bot = frame_top + e.currentTarget.offsetHeight;
+		orig_left = e.currentTarget.offsetLeft;
+		orig_top = e.currentTarget.offsetTop
+		offset_x = x_crop - orig_left;
+		offset_y = y_crop - orig_top;
+		var bound = document.getElementById('full').getBoundingClientRect();
+		frame_left = Math.round(bound.left);
+		frame_top = Math.round(bound.top);
+		frame_right = Math.round(bound.right);
+		frame_bot = Math.round(bound.bottom);
+
+		// offset_x = x_crop - 200;
+		// offset_y = y_crop - 45;
+		// frame_left = e.clientX - offset_x;
+		// frame_top = e.clientY - offset_y;
+		// frame_right = frame_left + e.currentTarget.offsetWidth;
+		// frame_bot = frame_top + e.currentTarget.offsetHeight;
+		// console.log(frame_left, frame_top, frame_right, frame_bot);
 	    $(window).mousemove(function (e) {
 	    	$('#select-box').removeClass('hide');
 	        x_crop2 = e.clientX;
@@ -134,9 +146,10 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		    document.getElementById("select-box").style.left = String(start_left + delta_x) + 'px';
 		    document.getElementById("select-box").style.top = String(start_top + delta_y) + 'px';
 
-		    offset_x = box_left - frame_left;
-		    offset_y = box_top - frame_top;
-		    console.log(offset_x)
+		    offset_x = box_left - orig_left;
+		    offset_y = box_top - orig_top;
+		    // offset_x = box_left - frame_left;
+		    // offset_y = box_top - frame_top;
 		}).mouseup(function (e) {
 			$(window).unbind("mousemove");
 		})
@@ -157,15 +170,18 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		
 		var angle = $scope.angle * Math.PI / 180;
 
-		if (document.getElementById('full').getBoundingClientRect) {
+		// if (document.getElementById('full').getBoundingClientRect) {
 			var bound = document.getElementById('full').getBoundingClientRect();
 			if ($scope.angle == 90 || $scope.angle == 270) {
-				left = (offset_x + 200 - bound.left) * scale;
-				top = (offset_y + 45 - bound.top) * scale
+				console.log(offset_x, orig_left, bound.left);
+				console.log(offset_y, orig_top, bound.top, scale);
+				left = (offset_x + orig_left - bound.left) * scale;
+				top = (offset_y + orig_top - bound.top) * scale
 			}
-		}
+		// }
 
 		var data = { angle: $scope.angle, x: left, y: top, crop_width: crop_width, crop_height: crop_height, crop: crop };
+		console.log(data);
 
 		$scope.message = {};
 
