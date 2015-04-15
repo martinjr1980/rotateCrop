@@ -23,6 +23,17 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		}
 	}
 
+	
+
+	// $(document).ready(function() {
+	// 	document.getElementById('img').style.opacity = '0';	
+	// })
+	
+	// $('img').hide();
+	// $('img').on('load', function() {
+	// 	$(this).fadeIn();
+	// })
+
 	// Event handler for creating crop window
 	$("#full")
 	.mousedown(function (e) {
