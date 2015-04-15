@@ -48,8 +48,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	})
 	.mouseup(function(e) {
 		$('#select-box').addClass('hide');
-		x_crop2 = undefined;
-		y_crop2 = undefined;
 	});
 
 	// Even handler for moving crop window
@@ -136,38 +134,66 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 
 		    offset_x = box_left - frame_left;
 		    offset_y = box_top - frame_top;
-		    console.log(offset_x)
 		}).mouseup(function (e) {
 			$(window).unbind("mousemove");
 		})
 	})
 
 	$scope.save = function(photo) {
+		console.log(photo);
 		if (y_crop2 === undefined || x_crop2 === undefined) {
-			var crop = false;
-		} else {
-			var crop = true;
+			$scope.message = { update_fail: 'Please define crop area first' };
+			return;
 		}
 
-		var scale = photo.width / $('#full').width();
+		var image = new Image();
+		// image.crossOrigin = 'anonymous';
+		image.src = document.getElementById('full').src;
+
+		var scale = image.width / $('#full').width();
 		var	left = offset_x * scale,
 			top = offset_y * scale,
 			crop_width = (x_crop2 - x_crop) * scale,
 			crop_height = (y_crop2 - y_crop) * scale;
+
+		var width = image.width;
+		var height = image.height;
 		
 		var angle = $scope.angle * Math.PI / 180;
+		var canvas = document.createElement('canvas');
+		
+		canvas.width = image.width;
+		canvas.height = image.height;
 
 		if (document.getElementById('full').getBoundingClientRect) {
-			var bound = document.getElementById('full').getBoundingClientRect();
-			if ($scope.angle == 90 || $scope.angle == 270) {
-				left = (offset_x + 200 - bound.left) * scale;
-				top = (offset_y + 45 - bound.top) * scale
-			}
+			console.log(document.getElementById('full').getBoundingClientRect(), scale);
 		}
 
-		var data = { angle: $scope.angle, x: left, y: top, crop_width: crop_width, crop_height: crop_height, crop: crop };
+		var data = { angle: $scope.angle, x: left, y: top, crop_width: crop_width, crop_height: crop_height, width: width, height: height };
+		console.log(data);
 
+		// Need to translate so you are rotating about the center of image
+		// canvas.getContext('2d').save();
+		// canvas.getContext('2d').translate(canvas.width/2, canvas.height/2);
+		// canvas.getContext('2d').rotate(angle);
+		// canvas.getContext('2d').translate(-canvas.width/2, -canvas.height/2);
+		// canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
+
+		// Restore from saved state so you can use originla X, Y coords
+		// canvas.getContext('2d').restore();
+		// image.src = canvas.toDataURL('image/jpeg');
+		// console.log(image);
+		// canvas.width = crop_width;
+		// canvas.height = crop_height;
+		// canvas.getContext('2d').translate(-left, -top);
+		// canvas.getContext('2d').drawImage(image, 0, 0, width, height, 0, 0, width, height);
+		// var base64 = canvas.toDataURL('image/jpeg');
+		
 		$scope.message = {};
+		// PhotoFactory.updatePhoto(photo, base64, function (output) {
+		// 	$scope.message = output.message;
+		// 	localStorage.current_photo = JSON.stringify(output.photo);
+		// })
 
 		PhotoFactory.updatePhoto(photo, data, function (output) {
 			// $window.location.reload();

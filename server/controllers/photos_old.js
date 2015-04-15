@@ -92,58 +92,72 @@ module.exports = (function() {
 		},
 
 		update: function (req, res) {
+			// var data = JSON.parse(req.body.data).base64;
 			var data = JSON.parse(req.body.data).data;
 			var name = JSON.parse(req.body.data).name;
 			var id = JSON.parse(req.body.data).id;
+			console.log(data);
 
-			if (data.crop == true) {
-				var edited = gm('https://s3-us-west-1.amazonaws.com/fastfit/' + name)
-								.rotate('black', data.angle)
-								.crop(data.crop_width, data.crop_height, data.x, data.y)
-			} else {
-				var edited = gm('https://s3-us-west-1.amazonaws.com/fastfit/' + name)
-								.rotate('black', data.angle)
-			}
+			// function decodeBase64Image(dataString) {
+			// 	var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+			// 	var response = {};
 
-			edited.stream(function (err, stdout, stderr) {
-				var buffer = new Buffer('');
-				stdout.on('data', function (data) {
-					buffer = Buffer.concat([buffer, data]);
-				})
-				stdout.on('end', function (data) {
-					s3.putObject({
-						ACL: 'public-read',
-					    Bucket: S3_BUCKET,
-					    Key: 'edited/edited_' + name,
-					    Body: buffer,
-					    ContentType: 'image/png'
-					}, function (err) {
-						if (err) {
-							console.log('error1', err);
-							res.status(400).send('Could not save file!');
-						}
-						else {
-							Photo.findOne({ _id: id }, function (err, photo) {
-								if (err) {
-									console.log('error2', err);
-									res.status(400).send('Could not save file!');
-								}
-								else {
-									photo.edited = true;
-									var parser = require('exif-parser').create(buffer);
-									var result = parser.parse();
-									photo.edit_height = result.imageSize.height;
-									photo.edit_width = result.imageSize.width;
-									photo.save(function (err) {
-										res.json(photo);
-									})
-								}
-							})
-							
-						}
+			// 	if (matches.length !== 3) {
+			// 	return new Error('Invalid input string');
+			// 	}
+
+			// 	response.type = matches[1];
+			// 	response.data = new Buffer(matches[2], 'base64');
+
+			// 	return response;
+			// }
+
+			// var imageBuffer = decodeBase64Image(data);
+			// var newPath = "./client/angular/public/images/edited/edited_" + name;
+			// fs.writeFile(newPath, imageBuffer.data, function (err) {
+
+			gm('https://s3-us-west-1.amazonaws.com/fastfit/' + name)
+				.rotate('black', data.angle)
+				.crop(data.crop_width, data.crop_height, data.x, data.y)
+				.stream(function (err, stdout, stderr) {
+					var buffer = new Buffer('');
+					stdout.on('data', function (data) {
+						buffer = Buffer.concat([buffer, data]);
+					})
+					stdout.on('end', function (data) {
+						s3.putObject({
+							ACL: 'public-read',
+						    Bucket: S3_BUCKET,
+						    Key: 'edited/edited_' + name,
+						    Body: buffer,
+						    ContentType: 'image/png'
+						}, function (err) {
+							if (err) {
+								console.log('error1', err);
+								res.status(400).send('Could not save file!');
+							}
+							else {
+								Photo.findOne({ _id: id }, function (err, photo) {
+									if (err) {
+										console.log('error2', err);
+										res.status(400).send('Could not save file!');
+									}
+									else {
+										photo.edited = true;
+										var parser = require('exif-parser').create(buffer);
+										var result = parser.parse();
+										photo.edit_height = result.imageSize.height;
+										photo.edit_width = result.imageSize.width;
+										photo.save(function (err) {
+											res.json(photo);
+										})
+									}
+								})
+								
+							}
+						})
 					})
 				})
-			})
 		}
 	}
 })();
