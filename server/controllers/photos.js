@@ -37,12 +37,12 @@ module.exports = (function() {
 							res.status(400).send('Could not upload file!');
 						}
 						else {
-							var size = { width: 200, height: 200 };
 							var thumb = gm(req.files.file.path)
 											.autoOrient()
-											.resize(size.width, size.height + "^")
-											.gravity('Center')
-											.extent(size.width, size.height)
+											.resize(null, 200)
+											// .resize(size.width, size.height + "^")
+											// .gravity('Center')
+											// .extent(size.width, size.height)
 							thumb.stream(function (err, stdout, stderr) {
 								var buf = new Buffer('');
 								stdout.on('data', function (data) {
@@ -61,10 +61,10 @@ module.exports = (function() {
 										}
 										else {
 											var photo = new Photo();
-											photo.name = req.files.file.originalFilename;
-											photo.created_at = new Date();
 											var parser = require('exif-parser').create(buffer);
 											var result = parser.parse();
+											photo.name = req.files.file.originalFilename;
+											photo.created_at = new Date();
 											photo.height = result.imageSize.height;
 											photo.width = result.imageSize.width;
 											photo.save(function (err) {
