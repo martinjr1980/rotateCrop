@@ -1,6 +1,11 @@
-galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory, $window, $route) {
+galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory, $window) {
 	$(window).load(function() {
 		$('#overlay').hide();
+	});
+
+	// Prevents issue with Firefox dragging image
+	$('img').on('dragstart', function (e) { 
+		e.preventDefault(); 
 	});
 
 	//Initializations

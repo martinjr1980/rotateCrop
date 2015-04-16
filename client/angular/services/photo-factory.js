@@ -10,10 +10,12 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 	}
 
 	factory.updatePhoto = function(photo, data, callback) {
+		$('#update').removeClass('hide');
+		$('#save-status').removeClass('hide');
+
 		$upload.upload({ url: 'update', method: 'POST', data: { id: photo._id, name: photo.name, data: data }})
 			.progress(function (evt) {
-				$('#update').removeClass('hide');
-				$('#save-status').removeClass('hide');
+			// Moved the updated * save-status lines above because it wasn't working in FireFox
 			}).success(function (data, status, headers, config) {
 				for (var i in photos) {
 					if (photos[i]._id == data._id) {
@@ -32,10 +34,11 @@ galleryApp.factory('PhotoFactory', function ($upload, $http) {
 	}
 
 	factory.uploadPhoto = function(file, callback) {
+		$('#upload').removeClass('hide');
+		$('#up-status').text('Uploading...');
+
 		$upload.upload({ url: 'upload', method: 'POST', file: file })
 			.progress(function (evt) {
-				$('#upload').removeClass('hide');
-				$('#up-status').text('Uploading...');
 	            // var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
 			}).success(function (data, status, headers, config) {
 				photos.push(data);
