@@ -6,12 +6,14 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	//Initializations
 	var x_crop, y_crop, x_crop2, y_crop2, orig_left, orig_top, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
 	$scope.angle = "0";
+
 	PhotoFactory.getPhotos(function (output) {
 		$scope.photos = output;
 	})
 
 	$scope.$on('$routeChangeSuccess', function() {
 		$scope.name = $routeParams.name;
+		$scope.message = {};
 	});
 
 	if (localStorage.current_photo !== JSON.stringify({}) && localStorage.current_photo) {
@@ -173,7 +175,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		}
 
 		var data = { angle: $scope.angle, x: left, y: top, crop_width: crop_width, crop_height: crop_height, crop: crop };
-		$scope.message = {};
 
 		PhotoFactory.updatePhoto(photo, data, function (output) {
 			$window.location.reload();
