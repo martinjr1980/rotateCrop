@@ -71,6 +71,11 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	// Event handler for moving crop window
 	$('#select-box')
 	.mousedown(function (e) {
+		// Fixes FireFox bug
+
+		e.offsetX = e.offsetX || e.pageX - $('#select-box').offset().left;
+		e.offsetY = e.offsetY || e.pageY - $('#select-box').offset().top;
+
 		var box = document.getElementById('select-box');
 		var box_width = parseInt(box.style.width);
 		var box_height = parseInt(box.style.height);
@@ -78,8 +83,13 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 		var start_y = e.clientY;
 		var start_left = start_x - e.offsetX;
 		var start_top = start_y - e.offsetY;
+		var tempX = e.clientX;
+		var tempY = e.clientY;
 
 		$(window).mousemove(function (e) {
+			e.offsetX = e.offsetX || e.pageX - $('#select-box').offset().left;
+			e.offsetY = e.offsetY || e.pageY - $('#select-box').offset().top;
+
 			var box_left = parseInt(box.style.left);
 			var box_right = box_left + box_width;
 			var box_top = parseInt(box.style.top);
@@ -88,8 +98,14 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 			var delta_x = e.clientX - start_x;
 		    var delta_y = e.clientY - start_y;
 
+		    // Fixes Safari issue of crop box sticking to image border (instead of using originalEvent)
+		    var movementX = e.clientX - tempX;
+		    var movementY = e.clientY - tempY;
+		    tempX = e.clientX;
+		    tempY = e.clientY;
+
 			if (box_left <= frame_left) {
-				if (e.originalEvent.movementX > 0) {
+				if (movementX > 0) {
 					start_x = e.clientX;
 					if (start_x <= box_left) {
 						start_left = start_x + (frame_left - e.offsetX);
@@ -104,7 +120,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 				}
 			}
 			else if (box_right >= frame_right) {
-				if (e.originalEvent.movementX < 0) {	
+				if (movementX < 0) {	
 					start_x = e.clientX;
 					if (start_x >= box_right) {
 						start_left = start_x + (frame_right - e.offsetX) - box_width;
@@ -119,7 +135,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 				}
 			}
 			if (box_top <= frame_top) {
-				if (e.originalEvent.movementY > 0) {
+				if (movementY > 0) {
 					start_y = e.clientY;
 					if (start_y <= box_top) {
 						start_top = start_y + (frame_top - e.offsetY);
@@ -134,7 +150,7 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 				}
 			}
 			else if (box_bot >= frame_bot) {
-				if (e.originalEvent.movementY < 0) {
+				if (movementY < 0) {
 					start_y = e.clientY;
 					if (start_y >= box_bot) {
 						start_top = start_y + (frame_bot - e.offsetY) - box_height;
@@ -148,8 +164,9 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 					delta_y = frame_bot - (start_top + box_height);
 				}
 			}
-		    document.getElementById("select-box").style.left = String(start_left + delta_x) + 'px';
-		    document.getElementById("select-box").style.top = String(start_top + delta_y) + 'px';
+			$('#select-box').css({ left: start_left + delta_x, top: start_top + delta_y });
+		    // document.getElementById("select-box").style.left = String(start_left + delta_x) + 'px';
+		    // document.getElementById("select-box").style.top = String(start_top + delta_y) + 'px';
 
 		    offset_x = box_left - orig_left;
 		    offset_y = box_top - orig_top;
