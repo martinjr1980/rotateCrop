@@ -17,8 +17,11 @@
 			</div>
 		</div>
 		<div id='content'>
+			<div id="overlay">
+				<img id='loading' src='angular/public/images/uploading.gif' height=100 width=100>
+			</div>
 			<div id='frame' ng-init='!isHidden' ng-show='!isHidden'>
-				<img id='full' rotate degrees='angle' ng-src="https://s3-us-west-1.amazonaws.com/fastfit/{{name}}">
+				<img id='full' rotate degrees='angle' ng-src="https://s3-us-west-1.amazonaws.com/fastfit/{{name}}" class='hide' imageonload>
 			</div>
 			<img id='edited-photo' ng-hide='!isHidden' ng-show='current_photo.edited == true' ng-src="https://s3-us-west-1.amazonaws.com/fastfit/edited/edited_{{name}}">
 			<div id='select-box' class='hide'></div>

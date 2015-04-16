@@ -1,4 +1,8 @@
 galleryApp.controller('PhotoController', function ($scope, $routeParams, $location, PhotoFactory, $window, $route) {
+	$(window).load(function() {
+		$('#overlay').hide();
+	});
+
 	//Initializations
 	var x_crop, y_crop, x_crop2, y_crop2, orig_left, orig_top, offset_x, offset_y, frame_top, frame_bot, frame_left, frame_right;	
 	$scope.angle = "0";
@@ -22,17 +26,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 			}
 		}
 	}
-
-	
-
-	// $(document).ready(function() {
-	// 	document.getElementById('img').style.opacity = '0';	
-	// })
-	
-	// $('img').hide();
-	// $('img').on('load', function() {
-	// 	$(this).fadeIn();
-	// })
 
 	// Event handler for creating crop window
 	$("#full")
