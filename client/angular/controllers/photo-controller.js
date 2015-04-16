@@ -72,7 +72,6 @@ galleryApp.controller('PhotoController', function ($scope, $routeParams, $locati
 	$('#select-box')
 	.mousedown(function (e) {
 		// Fixes FireFox bug
-
 		e.offsetX = e.offsetX || e.pageX - $('#select-box').offset().left;
 		e.offsetY = e.offsetY || e.pageY - $('#select-box').offset().top;
 
