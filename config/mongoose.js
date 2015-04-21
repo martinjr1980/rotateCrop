@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var config = require('./config.js');
 // Require file system so that we can load up and read all of the model files that we create
 var fs = require('fs');
 
@@ -7,7 +8,7 @@ var connect = function() {
 	var options = { server: { socketOptions: { keepAive: 1 } } };
 	// Connect to our mongodb database server with options specified above
 	// mongoose.connect('mongodb://localhost/galleryApp', options);
-	mongoose.connect('mongodb://heroku_app34619736:gs8bnujp4th6dtllbsb69rsjkt@dbh15.mongolab.com:27157/heroku_app34619736', options);
+	mongoose.connect(config.mongodb.uri, options);
 }
 connect();
 

@@ -1,5 +1,11 @@
 *.env
 
+# Other #
+#########
+*.doc
+*.xls
+*.xlsx
+
 # Compiled source #
 ###################
 *.com

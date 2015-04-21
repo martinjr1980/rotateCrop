@@ -1,13 +1,12 @@
+var aws = require('aws-sdk');
 var fs = require('fs');
 var gm = require('gm').subClass({ imageMagick: true });
+
 var Photo = require('./../models/photo');
+var config = require('./../../config/config.js');
 
-var aws = require('aws-sdk');
-var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
-var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
-var S3_BUCKET = process.env.S3_BUCKET;
-aws.config.update({accessKeyId: AWS_ACCESS_KEY , secretAccessKey: AWS_SECRET_KEY });
-
+var S3_BUCKET = config.aws.s3_bucket;
+aws.config.update({ accessKeyId: config.aws.access_key , secretAccessKey: config.aws.secret_key });
 var s3 = new aws.S3();
 
 module.exports = (function() {
