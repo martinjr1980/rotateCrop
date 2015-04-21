@@ -1,10 +1,6 @@
 var express = require('express');
-var http = require('http');
 var path = require('path');
 var multipart = require('connect-multiparty');
-var fs = require('fs');
-var gm = require('gm').subClass({ imageMagick: true });
-var aws = require('aws-sdk');
 
 var app = express();
 app.use(multipart());
